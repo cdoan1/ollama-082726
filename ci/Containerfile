@@ -1,0 +1,12 @@
+# CI build-root image for rosa-regional-platform-cli PR checks.
+# Used by ci-operator via build_root.project_image.dockerfile_path.
+FROM registry.ci.openshift.org/openshift/release:rhel-9-release-golang-1.26-openshift-4.23
+
+RUN dnf install -y podman fuse-overlayfs --setopt=install_weak_deps=False && dnf clean all && \
+    setcap cap_setuid+ep /usr/bin/newuidmap && \
+    setcap cap_setgid+ep /usr/bin/newgidmap && \
+    echo '1000:10000:65536' >> /etc/subuid && \
+    echo '1000:10000:65536' >> /etc/subgid
+
+# Allow Go toolchain auto-download for go.mod version requirements (1.26.3)
+# ENV GOTOOLCHAIN=auto
